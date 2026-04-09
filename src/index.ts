@@ -9,9 +9,7 @@ import {
     deleteProject,
     ProjectFilter,
     NewProjectInput,
-    UpdateProjectInput,
-    // listProjectsByStatus,
-    // ProjectFilterStatus
+    UpdateProjectInput
 } from "./repositories/projects.repository";
 
 const app = express();
