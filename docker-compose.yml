@@ -1,0 +1,10 @@
+services:
+  db:
+    image: postgres:latest
+    container_name: my-postgres2
+    ports:
+      - "5533:5432"
+    environment:
+      POSTGRES_DB: projectsdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
