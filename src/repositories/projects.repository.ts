@@ -42,27 +42,51 @@ export type UpdateProjectInput = {
  */
 export type ProjectFilter = {
     name?: string;
+    status?: "todo" | "in_progress" | "done";
 };
 
 /** Список: весь или отфильтрованный по подстроке name (ILIKE). */
-export async function listProjects(filter: ProjectFilter = {}): Promise<ProjectRowDb[]> {
-    const { name } = filter;
+export async function listProjects(filterByName: ProjectFilter = {},
+                                   filterByStatus: ProjectFilter): Promise<ProjectRowDb[]> {
+    const {name} = filterByName;
+    const {status} = filterByStatus;
 
-    if (!name) {
-        const { rows } = await pool.query<ProjectRowDb>(
-            `SELECT * FROM projects ORDER BY id DESC`
+    if (name && status) {
+        const {rows} = await pool.query<ProjectRowDb>(
+            `SELECT *
+             FROM projects
+             WHERE name ILIKE $1
+               AND status = $2
+             ORDER BY id DESC`,
+            [`%${name}%`, status]
+        );
+        return rows;
+    } else if (name) {
+        const {rows} = await pool.query<ProjectRowDb>(
+            `SELECT *
+             FROM projects
+             WHERE name ILIKE $1
+             ORDER BY id DESC`,
+            [`%${name}%`]
+        );
+        return rows;
+    } else if (status) {
+        const {rows} = await pool.query<ProjectRowDb>(
+            `SELECT *
+             FROM projects
+             WHERE status = $1
+             ORDER BY id DESC`,
+            [status]
+        );
+        return rows;
+    } else {
+        const {rows} = await pool.query<ProjectRowDb>(
+            `SELECT *
+             FROM projects
+             ORDER BY id DESC`
         );
         return rows;
     }
-
-    const { rows } = await pool.query<ProjectRowDb>(
-        `SELECT * FROM projects
-         WHERE name ILIKE $1
-         ORDER BY id DESC`,
-        [`%${name}%`]
-    );
-
-    return rows;
 }
 
 /**

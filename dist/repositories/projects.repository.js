@@ -8,16 +8,37 @@ exports.deleteProject = deleteProject;
 // src/repositories/projects.repository.ts
 const db_1 = require("../db");
 /** Список: весь или отфильтрованный по подстроке name (ILIKE). */
-async function listProjects(filter = {}) {
-    const { name } = filter;
-    if (!name) {
-        const { rows } = await db_1.pool.query(`SELECT * FROM projects ORDER BY id DESC`);
+async function listProjects(filterByName = {}, filterByStatus) {
+    const { name } = filterByName;
+    const { status } = filterByStatus;
+    if (name && status) {
+        const { rows } = await db_1.pool.query(`SELECT *
+             FROM projects
+             WHERE name ILIKE $1
+               AND status = $2
+             ORDER BY id DESC`, [`%${name}%`, status]);
         return rows;
     }
-    const { rows } = await db_1.pool.query(`SELECT * FROM projects
-         WHERE name ILIKE $1
-         ORDER BY id DESC`, [`%${name}%`]);
-    return rows;
+    else if (name) {
+        const { rows } = await db_1.pool.query(`SELECT *
+             FROM projects
+             WHERE name ILIKE $1
+             ORDER BY id DESC`, [`%${name}%`]);
+        return rows;
+    }
+    else if (status) {
+        const { rows } = await db_1.pool.query(`SELECT *
+             FROM projects
+             WHERE status = $1
+             ORDER BY id DESC`, [status]);
+        return rows;
+    }
+    else {
+        const { rows } = await db_1.pool.query(`SELECT *
+             FROM projects
+             ORDER BY id DESC`);
+        return rows;
+    }
 }
 /**
  * Создание проекта.

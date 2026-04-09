@@ -24,8 +24,8 @@ app.get("/", (_req, res) => {
 });
 // GET /projects?name=...
 app.get("/projects", async (req, res) => {
-    const { name } = req.query;
-    const rows = await (0, projects_repository_1.listProjects)({ name });
+    const { name, status } = req.query;
+    const rows = await (0, projects_repository_1.listProjects)({ name }, { status });
     res.status(HTTP.OK).json(rows);
 });
 // GET /projects/:id

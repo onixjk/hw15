@@ -35,8 +35,8 @@ app.get("/", (_req: Request, res: Response) => {
 
 // GET /projects?name=...
 app.get("/projects", async (req: Request, res: Response) => {
-    const { name } = req.query as ProjectFilter;
-    const rows = await listProjects({ name });
+    const { name, status } = req.query as ProjectFilter;
+    const rows = await listProjects({ name }, { status });
     res.status(HTTP.OK).json(rows);
 });
 
