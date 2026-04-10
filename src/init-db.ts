@@ -12,6 +12,18 @@ async function init() {
     );
   `);
     console.log("✅ Таблица projects готова");
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS tasks (
+      id SERIAL PRIMARY KEY,
+      project_id INTEGER NOT NULL,
+      title TEXT NOT NULL,
+      is_done BOOLEAN NOT NULL DEFAULT false,
+      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+      FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE
+    );
+  `);
+    console.log("✅ Таблица tasks готова");
     await pool.end();
 }
 init();
