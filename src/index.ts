@@ -88,6 +88,12 @@ app.get("/projects/:id/with-tasks", async (req: Request, res: Response) => {
 
 // POST /projects   { name, description?, status? }
 app.post("/projects", async (req: Request, res: Response) => {
+
+    if (!req.body) {
+        res.status(HTTP.BAD_REQUEST).json({ error: "Invalid body" });
+        return;
+    }
+
     const { name, description, status } = req.body as NewProjectInput;
 
     if (!name) {

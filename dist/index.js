@@ -63,6 +63,10 @@ app.get("/projects/:id/with-tasks", async (req, res) => {
 });
 // POST /projects   { name, description?, status? }
 app.post("/projects", async (req, res) => {
+    if (!req.body) {
+        res.status(HTTP.BAD_REQUEST).json({ error: "Invalid body" });
+        return;
+    }
     const { name, description, status } = req.body;
     if (!name) {
         res.status(HTTP.BAD_REQUEST).json({ error: "Name is required" });
