@@ -23,6 +23,7 @@ const HTTP = {
     NOT_FOUND: 404,
 } as const;
 
+// Middleware
 app.use(express.json());
 app.use(cors());
 
