@@ -34,7 +34,7 @@ app.get("/", (_req: Request, res: Response) => {
 // GET /projects?name=...
 app.get("/projects", async (req: Request, res: Response) => {
     const { name, status } = req.query as ProjectFilter;
-    const rows = await listProjects({ name }, { status });
+    const rows = await listProjects({ name, status });
     res.status(HTTP.OK).json(rows);
 });
 
@@ -43,11 +43,6 @@ app.get("/projects/:id", async (req: Request, res: Response) => {
     // req.params.id — это СТРОКА. Сначала явно приводим к числу:
     const idNum = Number(req.params.id);
 
-    // Number.isFinite проверяет «настоящее» конечное число (не NaN/Infinity).
-    // ВАЖНО: глобальный isFinite("123") → true (неявно приводит к числу),
-    // а Number.isFinite("123") → false (строго, без приведения).
-    // Поэтому делаем два шага: Number(...) → Number.isFinite(idNum)
-    // Также это гораздо надежнее чем проверка с помощью IsNaN
     if (!Number.isFinite(idNum) || idNum <= 0) {
         res.status(HTTP.BAD_REQUEST).json({ error: "Invalid project ID" });
         return;
