@@ -16,6 +16,7 @@ const HTTP = {
     BAD_REQUEST: 400,
     NOT_FOUND: 404,
 };
+// Middleware
 app.use(express_1.default.json());
 app.use((0, cors_1.default)());
 // Пинг
@@ -25,18 +26,13 @@ app.get("/", (_req, res) => {
 // GET /projects?name=...
 app.get("/projects", async (req, res) => {
     const { name, status } = req.query;
-    const rows = await (0, projects_repository_1.listProjects)({ name }, { status });
+    const rows = await (0, projects_repository_1.listProjects)({ name, status });
     res.status(HTTP.OK).json(rows);
 });
 // GET /projects/:id
 app.get("/projects/:id", async (req, res) => {
     // req.params.id — это СТРОКА. Сначала явно приводим к числу:
     const idNum = Number(req.params.id);
-    // Number.isFinite проверяет «настоящее» конечное число (не NaN/Infinity).
-    // ВАЖНО: глобальный isFinite("123") → true (неявно приводит к числу),
-    // а Number.isFinite("123") → false (строго, без приведения).
-    // Поэтому делаем два шага: Number(...) → Number.isFinite(idNum)
-    // Также это гораздо надежнее чем проверка с помощью IsNaN
     if (!Number.isFinite(idNum) || idNum <= 0) {
         res.status(HTTP.BAD_REQUEST).json({ error: "Invalid project ID" });
         return;
